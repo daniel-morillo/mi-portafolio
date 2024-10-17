@@ -1,4 +1,4 @@
-import mePhoto from "./assets/photo.jpg";
+import mePhoto from "./assets/DanPhoto.jpg";
 import PropTypes from "prop-types";
 
 export default function About({ language }) {
