@@ -1,80 +1,96 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types'; // Importa PropTypes
+import { AnimatePresence, motion } from 'motion/react';
+import PropTypes from 'prop-types';
+
+const links = [
+  { href: '#home', es: 'Inicio', en: 'Home' },
+  { href: '#about', es: 'Sobre Mí', en: 'About Me' },
+  { href: '#projects', es: 'Proyectos', en: 'Projects' },
+  { href: '#skills', es: 'Habilidades', en: 'Skills' },
+  { href: '#contact', es: 'Contacto', en: 'Contact' },
+];
 
 export default function Header({ language, toggleLanguage }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isEs = language === 'es';
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="bg-primary text-text p-4 flex justify-between items-center">
-      <div className="text-2xl font-extrabold">Daniel</div>
+    <header className="sticky top-0 z-50 border-b border-text/10 bg-primary/80 text-text backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl xl:max-w-[90rem] items-center justify-between px-4 py-3 sm:px-6">
+        <a href="#home" className="text-2xl font-extrabold tracking-tight text-text transition-colors hover:text-highlight">
+          Daniel<span className="text-secondary">.</span>
+        </a>
 
-      <div className="hidden md:flex space-x-4">
-        <a href="#home" className="hover:text-highlight p-4 text-lg font-semibold">
-          {language === 'es' ? 'Inicio' : 'Home'}
+        <nav className="hidden items-center gap-1 md:flex">
+          {links.map((link) => (
+            <a key={link.href} href={link.href} className="nav-link">
+              {isEs ? link.es : link.en}
+            </a>
+          ))}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="nav-link ml-1 cursor-pointer border-0 bg-transparent"
+          >
+            {isEs ? 'EN' : 'ES'}
+          </button>
+        </nav>
+
+        <a href="mailto:danielmorillo2013@gmail.com" className="btn-primary hidden text-sm md:inline-flex">
+          {isEs ? 'Contáctame' : 'Contact Me'}
         </a>
-        <a href="#about" className="hover:text-highlight p-4 text-lg font-semibold">
-          {language === 'es' ? 'Sobre Mi' : 'About Me'}
-        </a>
-        <a href="#services" className="hover:text-highlight p-4 text-lg font-semibold">
-          {language === 'es' ? 'Servicios' : 'Services'}
-        </a>
-        <a href="#contact" className="hover:text-highlight p-4 text-lg font-semibold">
-          {language === 'es' ? 'Contacto' : 'Contact'}
-        </a>
-        <a className="hover:text-highlight p-4 text-lg font-semibold" onClick={toggleLanguage}>
-          {language === 'es' ? 'EN' : 'ES'}
-        </a>
+
+        <button
+          type="button"
+          className="btn btn-ghost btn-square text-2xl md:hidden"
+          onClick={() => setIsOpen((open) => !open)}
+          aria-label={isEs ? 'Abrir menú' : 'Open menu'}
+        >
+          {isOpen ? '✕' : '☰'}
+        </button>
       </div>
 
-      <a href="mailto:danielmorillo2013@gmail.com" className="hidden md:block">
-        <button className="bg-secondary text-text py-2 px-4 rounded">
-          {language === 'es' ? 'Contáctame' : 'Contact Me'}
-        </button>
-      </a>
-
-
-      <button className="md:hidden text-3xl" onClick={toggleMenu}>
-        ☰
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-16 right-0 w-1/2 bg-black bg-opacity-50 text-text flex flex-col items-center md:hidden space-y-2 p-4 rounded-bl-lg shadow-lg text-center">
-          <a href="#home" className="hover:text-highlight p-4 text-lg font-semibold" onClick={toggleMenu}>
-            {language === 'es' ? 'Inicio' : 'Home'}
-          </a>
-          <a href="#about" className="hover:text-highlight p-4 text-lg font-semibold" onClick={toggleMenu}>
-            {language === 'es' ? 'Sobre Mi' : 'About Me'}
-          </a>
-          <a href="#services" className="hover:text-highlight p-4 text-lg font-semibold" onClick={toggleMenu}>
-            {language === 'es' ? 'Servicios' : 'Services'}
-          </a>
-          <a href="#contact" className="hover:text-highlight p-4 text-lg font-semibold" onClick={toggleMenu}>
-            {language === 'es' ? 'Contacto' : 'Contact'}
-          </a>
-          <a className="hover:text-highlight p-4 text-lg font-semibold" onClick={toggleLanguage}>
-            {language === 'es' ? 'EN' : 'ES'}
-          </a>
-          <a href="mailto:danielmorillo2013@gmail.com" className="w-full">
-            <button className="bg-secondary text-text py-2 px-4 rounded w-full">
-              {language === 'es' ? 'Contáctame' : 'Contact Me'}
-            </button>
-          </a>
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.nav
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-t border-text/10 bg-primary/95 md:hidden"
+          >
+            <div className="flex flex-col items-center gap-1 px-4 py-4">
+              {links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="nav-link w-full text-center"
+                  onClick={closeMenu}
+                >
+                  {isEs ? link.es : link.en}
+                </a>
+              ))}
+              <button type="button" className="nav-link" onClick={toggleLanguage}>
+                {isEs ? 'EN' : 'ES'}
+              </button>
+              <a
+                href="mailto:danielmorillo2013@gmail.com"
+                className="btn-primary mt-2 w-full text-center"
+                onClick={closeMenu}
+              >
+                {isEs ? 'Contáctame' : 'Contact Me'}
+              </a>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
 
-// Define las validaciones de props
 Header.propTypes = {
-  language: PropTypes.string.isRequired, 
-  toggleLanguage: PropTypes.func.isRequired, 
+  language: PropTypes.string.isRequired,
+  toggleLanguage: PropTypes.func.isRequired,
 };
-
-
-
-
